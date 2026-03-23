@@ -14,6 +14,7 @@ const Product = () => {
       const params = {};
       if (search) params.search = search;
       if (category) params.category = category;
+
       const response = await api.get("/products", { params });
       setProducts(response.data);
       setError(null);
@@ -23,25 +24,23 @@ const Product = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchProducts();
+  }, [search, category]);
+
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
+    if (window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
       try {
         await api.delete(`/products/${id}`);
         fetchProducts();
       } catch (err) {
-        alert("Remove failed product");
+        alert("Xóa sản phẩm thất bại!");
       }
     }
   };
-
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Danh sách Sản phẩm</h2>
-        <Link to="/add" className="btn btn-success">
-          + Thêm mới
-        </Link>
-      </div>
       <div className="row mb-4">
         <div className="col-md-6 mb-2">
           <input
@@ -58,22 +57,24 @@ const Product = () => {
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           >
-            <option value="">All categories</option>
+            <option value="">category</option>
             <option value="Laptop">Laptop</option>
             <option value="Phone">Phone</option>
+            <option value="Tablet">Tablet</option>
           </select>
         </div>
       </div>
+
       {loading ? (
         <div className="text-center mt-5">
           <div className="spinner-border text-primary" role="status"></div>
-          <p className="mt-2">Loading data</p>
+          <p className="mt-2">Đang tải dữ liệu...</p>
         </div>
       ) : error ? (
         <div className="alert alert-danger text-center">{error}</div>
       ) : products.length === 0 ? (
         <div className="text-center mt-5 text-muted">
-          <h4>No matching products found</h4>
+          <h4>Không tìm thấy sản phẩm nào phù hợp!</h4>
         </div>
       ) : (
         <div className="row">
